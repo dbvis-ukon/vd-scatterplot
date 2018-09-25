@@ -1,0 +1,157 @@
+{
+  "name": "@dbvis/vd-scatterplot",
+  "version": "0.0.1",
+  "description": "A simple scatterplot",
+  "main": "dist/vd-scatterplot.js",
+  "module": "lib/public_api.js",
+  "es2015": "lib-esm/public_api.js",
+  "types": "@types/public_api.d.ts",
+  "style": "dist/styles.css",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:dbvis-ukon/vd-scatterplot.git"
+  },
+  "author": "Wolfgang Jentner <wolfgang.jentner@uni.kn>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=6.9"
+  },
+  "scripts": {
+    "cleanup": "shx rm -rf dist lib lib-esm lib-fesm @types coverage docs .dist",
+    "prebuild": "npm run cleanup && npm run verify",
+    "build": " tsc && tsc --target es2017 --outDir lib-esm && webpack && shx rm -rf dist/styles.js*",
+    "build:fesm:min": "uglifyjs lib-fesm/public_api.js --compress --mangle --source-map --output lib-fesm/public_api.min.js",
+    "docs": "typedoc -p . --theme minimal --target 'es6' --excludeNotExported --excludePrivate --ignoreCompilerErrors --exclude \"**/src/**/__tests__/*.*\" --out docs src/",
+    "test": "jest",
+    "test:watch": "npm test -- --watch",
+    "test:coverage": "npm test -- --coverage",
+    "test:only-changed": "npm test -- --bail --onlyChanged",
+    "less:lint": "lesshint --max-warnings=0 \"./src\"",
+    "less:lint:fix": "autolesshint \"./src\" && npm run less:lint",
+    "ts:lint": "tslint --project tsconfig.json --format codeFrame",
+    "ts:lint:fix": "npm run ts:lint -- --fix",
+    "ts:format:base": "npm run prettier:ts -- {src,__{tests,mocks}__}/**/*.{ts,tsx}",
+    "ts:format": "npm run ts:format:base -- --list-different",
+    "ts:format:fix": "npm run ts:format:base -- --write",
+    "ts:style": "npm run ts:format && npm run ts:lint",
+    "ts:style:fix": "npm run ts:format:fix && npm run ts:lint:fix",
+    "verify": "npm run ts:style && npm run less:lint && npm test",
+    "cz": "git-cz",
+    "prettier:ts": "prettier --single-quote --print-width 120 --trailing-comma es5 --no-semi --parser typescript",
+    "precommit": "lint-staged",
+    "commitmsg": "commitlint -x @commitlint/config-conventional -e $GIT_PARAMS",
+    "prepush": "npm run ts:style && npm run less:lint && npm run test:only-changed",
+    "prerelease": "npm run build",
+    "release": "standard-version",
+    "postrelease": "npm run release:github && npm run release:npm",
+    "release:github": "git push --no-verify --follow-tags origin master",
+    "release:npm": "npm publish",
+    "release:preflight": "irish-pub",
+    "release:preflight:package": "npm pack",
+    "size": "shx echo \"Gzipped Size:\" && cross-var strip-json-comments --no-whitespace $npm_package_main | gzip-size",
+    "start": "webpack-dev-server --config webpack.dev.config.js"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    },
+    "validate-commit-msg": {
+      "types": "conventional-commit-types",
+      "maxSubjectLength": 120
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "npm run prettier:ts -- --write",
+      "npm run ts:lint:fix",
+      "git add"
+    ],
+    "src/**/*.{less}": [
+      "npm run less:lint:fix"
+    ]
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "transform": {
+      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/lib/",
+      "<rootDir>/lib-esm/",
+      "<rootDir>/dist/",
+      "<rootDir>/src/.*(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 85
+      }
+    }
+  },
+  "dependencies": {
+    "@types/d3": "^4.0.0",
+    "d3-array": "1.2.1",
+    "d3-axis": "1.0.8",
+    "d3-brush": "1.0.4",
+    "d3-polygon": "1.0.3",
+    "d3-scale": "2.1.0",
+    "d3-selection": "1.3.0",
+    "d3-transition": "1.1.1",
+    "d3-voronoi": "1.1.2",
+    "rxjs": "^6"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "6.2.0",
+    "@commitlint/config-conventional": "6.1.3",
+    "@types/jest": "~22.2.3",
+    "autolesshint": "0.2.1",
+    "awesome-typescript-loader": "^4.0.0",
+    "clean-webpack-plugin": "0.1.19",
+    "commitizen": "^2.9.6",
+    "copyfiles": "2.0.0",
+    "cross-var": "^1.1.0",
+    "css-loader": "0.28.11",
+    "cz-conventional-changelog": "^2.0.0",
+    "gzip-size-cli": "^2.0.0",
+    "html-webpack-plugin": "3.2.0",
+    "husky": "^0.14.1",
+    "irish-pub": "0.2.0",
+    "jest": "~22.4.0",
+    "less": "3.0.4",
+    "less-loader": "4.1.0",
+    "lesshint": "5.1.0",
+    "lint-staged": "^7.0.0",
+    "mini-css-extract-plugin": "0.4.0",
+    "optimize-css-assets-webpack-plugin": "4.0.2",
+    "prettier": "^1.12.1",
+    "shx": "0.2.2",
+    "standard-version": "^4.4.0",
+    "strip-json-comments-cli": "1.0.1",
+    "style-loader": "0.21.0",
+    "ts-jest": "~22.4.6",
+    "ts-loader": "4.4.1",
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-config-standard": "^7.0.0",
+    "tslint-loader": "3.6.0",
+    "tslint-react": "^3.6.0",
+    "typedoc": "^0.11.1",
+    "typescript": "^2.8.3",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^4.0.0",
+    "webpack-cli": "3.0.8",
+    "webpack-config-utils": "2.3.0",
+    "webpack-dev-server": "3.1.4"
+  }
+}

@@ -1,0 +1,46 @@
+.ukon-scatterplot {
+
+    font-family: 'Open Sans', sans-serif;
+    padding: 5px;
+
+    .title {
+        fill: grey;
+        font-size: 16px;
+        font-style: italic;
+        text-anchor: middle;
+    }
+
+    .datapoint {
+        opacity: 1;
+        r: 3;
+
+        &.selected {
+            opacity: 0.5;
+            r: 4;
+            stroke: black;
+            stroke-width: 1px;
+        }
+
+    }
+
+    .axis {
+
+        line {
+            stroke: grey;
+        }
+
+        path {
+            stroke: grey;
+        }
+
+    }
+
+    .tick {
+        text {
+            fill: grey;
+            font-size: 8px;
+            stroke-width: 0.5px;
+        }
+    }
+
+}
