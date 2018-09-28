@@ -8,16 +8,28 @@ cache:
   directories:
     - "node_modules"
 
+stages:
+  - test
+  - lint
+  - build
+
+
 jobs:
   include:
     - stage: "Code Format"
       node_js: "node"
-    - script: yarn ts:lint
+      
+      script: yarn ts:lint
       name: "TS Lint"
-    - script: yarn less:lint
+      
+      script: yarn less:lint
       name: "LESS Lint"
-    - script: yarn ts:format
+
+      script: yarn ts:format
       name: "Prettier Check"
+
+
     - stage: "Build"
       node_js: "node"
-    - script: yarn build
+
+      script: yarn build
