@@ -1,4 +1,3 @@
-import { DataItem } from './data-item'
 
 export interface ClusterItem {
   /**
@@ -12,7 +11,7 @@ export interface ClusterItem {
   color?: string
 
   /**
-   * The Data items that belong to the cluster.
+   * The data-item-ids that belong to the cluster.
    */
-  relatedItems: DataItem[]
+  relatedItemIds: string[]
 }
