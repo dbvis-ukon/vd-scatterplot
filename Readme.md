@@ -10,7 +10,7 @@ A data point has at least the attributes "id", "x", and "y",
 whereas the id is assumed to be unique.
 
 ## Example
-```
+```typescript
 const data: DataItem[] = [
   {
     id: '0',
