@@ -1,7 +1,6 @@
 import { ClusterItem } from './scatterplot/cluster-item'
 import { DataItem } from './scatterplot/data-item'
 import { Scatterplot } from './scatterplot/scatterplot'
-import { ScatterplotEvent } from './scatterplot/scatterplot-event'
 import './styles.less'
 
 const data: DataItem[] = [
@@ -37,7 +36,6 @@ const data: DataItem[] = [
   },
 ]
 
-
 const cluster: ClusterItem[] = [
   {
     id: '1',
@@ -49,15 +47,12 @@ const cluster: ClusterItem[] = [
   },
 ]
 
-
 const scatterplot: Scatterplot = new Scatterplot(document.getElementById('scatterplot') as HTMLElement, {
   colormap: ['#2ECCFA', '#58FA82', '#FA8258'],
   axis: true,
   voronoiCells: true,
   clusterHulls: true,
 })
-
-
 
 scatterplot.setData(data)
 scatterplot.setCluster(cluster)
