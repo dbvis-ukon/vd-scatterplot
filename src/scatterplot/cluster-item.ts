@@ -1,4 +1,3 @@
-
 export interface ClusterItem {
   /**
    * The id of the cluster.
