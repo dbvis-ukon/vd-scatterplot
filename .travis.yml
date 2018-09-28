@@ -16,20 +16,21 @@ stages:
 
 jobs:
   include:
-    - stage: "Code Format"
+    - stage: lint
       node_js: "node"
       
-      script: yarn ts:lint
+    - script: yarn ts:lint
       name: "TS Lint"
       
-      script: yarn less:lint
+    - script: yarn less:lint
       name: "LESS Lint"
 
-      script: yarn ts:format
+    - script: yarn ts:format
       name: "Prettier Check"
 
 
-    - stage: "Build"
+    - stage: build
       node_js: "node"
 
-      script: yarn build
+    - script: yarn build
+      name: "Build Dist"
