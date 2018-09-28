@@ -10,8 +10,7 @@ A data point has at least the attributes "id", "x", and "y",
 whereas the id is assumed to be unique.
 
 ## Example
-<code>
-
+```
 const data: DataItem[] = [
   {
     id: '0',
@@ -25,7 +24,7 @@ const data: DataItem[] = [
   }];
   
   
-  const cluster: ClusterItem[] = [
+const cluster: ClusterItem[] = [
     {
       id: '1',
       relatedItems: [data[0]]
@@ -39,13 +38,12 @@ const data: DataItem[] = [
   
 const scatterplot: Scatterplot = new Scatterplot(document.getElementById('scatterplot') as HTMLElement, { voronoiCells: true})
   
-  scatterplot.setData(data)
+scatterplot.setData(data)
   
   
-  scatterplot.setCluster(cluster);
+scatterplot.setCluster(cluster);
   
   
-  scatterplot.setOptions({axis: true, clusterHulls: true, voronoieCells: false, width: 500, height:500});
-
-</code>
+scatterplot.setOptions({axis: true, clusterHulls: true, voronoieCells: false, width: 500, height:500});
+```
 
