@@ -19,7 +19,7 @@ jobs:
     - stage: lint
       node_js: "node"
       
-    - script: yarn ts:lint
+      script: yarn ts:lint
       name: "TS Lint"
       
     - script: yarn less:lint
@@ -32,5 +32,5 @@ jobs:
     - stage: build
       node_js: "node"
 
-    - script: yarn build
+      script: yarn build
       name: "Build Dist"
