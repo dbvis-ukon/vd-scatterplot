@@ -1,0 +1,21 @@
+language: node_js
+
+cache:
+  yarn: true
+  directories:
+    - "node_modules"
+
+jobs:
+  include:
+    - stage: "Tests"
+    - script: yarn test
+      name: "Unit Tests"
+    - stage: "Code Format"
+    - script: yarn ts:lint
+      name: "TS Lint"
+    - script: yarn less:lint
+      name: "LESS Lint"
+    - script: yarn ts:format
+      name: "Prettier Check"
+    - stage: "Build"
+    - script: yarn build
