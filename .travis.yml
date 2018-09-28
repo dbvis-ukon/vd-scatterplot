@@ -10,10 +10,8 @@ cache:
 
 jobs:
   include:
-    - stage: "Tests"
-    - script: yarn test
-      name: "Unit Tests"
     - stage: "Code Format"
+      node_js: "node"
     - script: yarn ts:lint
       name: "TS Lint"
     - script: yarn less:lint
@@ -21,4 +19,5 @@ jobs:
     - script: yarn ts:format
       name: "Prettier Check"
     - stage: "Build"
+      node_js: "node"
     - script: yarn build
