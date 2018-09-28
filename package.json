@@ -62,8 +62,8 @@
   },
   "lint-staged": {
     "src/**/*.{ts,tsx}": [
-      "npm run prettier:ts -- --write",
       "npm run ts:lint:fix",
+      "npm run ts:format:fix",
       "git add"
     ],
     "src/**/*.{less}": [
