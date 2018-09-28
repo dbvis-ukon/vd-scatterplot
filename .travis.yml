@@ -1,0 +1,38 @@
+language: node_js
+node_js:
+  - "lts/*"
+  - "node"
+
+cache:
+  yarn: true
+  directories:
+    - "node_modules"
+
+stages:
+  - test
+  - lint
+  - build
+
+
+jobs:
+  include:
+    - stage: lint
+      
+      script: yarn ts:lint
+      node_js: "node"
+      name: "TS Lint"
+      
+    - script: yarn less:lint
+      node_js: "node"
+      name: "LESS Lint"
+
+    - script: yarn ts:format
+      node_js: "node"
+      name: "Prettier Check"
+
+
+    - stage: build
+
+      script: yarn build
+      node_js: "node"
+      name: "Build Dist"
