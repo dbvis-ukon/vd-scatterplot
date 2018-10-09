@@ -1,5 +1,5 @@
-export { Scatterplot } from './scatterplot/scatterplot'
-export { ScatterplotOptions } from './scatterplot/scatterplot-options'
-export { ScatterplotEvent } from './scatterplot/scatterplot-event'
+export { VdScatterplot } from './scatterplot/vd-scatterplot'
+export { VdScatterplotOptions } from './scatterplot/vd-scatterplot-options'
+export { VdScatterplotEvent } from './scatterplot/vd-scatterplot-event'
 export { DataItem } from './scatterplot/data-item'
 export { ClusterItem } from './scatterplot/cluster-item'

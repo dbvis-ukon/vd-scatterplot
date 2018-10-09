@@ -36,7 +36,7 @@ const cluster: ClusterItem[] = [
   ]
   
   
-const scatterplot: Scatterplot = new Scatterplot(document.getElementById('scatterplot') as HTMLElement, { voronoiCells: true})
+const scatterplot: VdScatterplot = new VdScatterplot(document.getElementById('scatterplot') as HTMLElement, { voronoiCells: true})
   
 scatterplot.setData(data)
   

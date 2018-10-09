@@ -10,7 +10,7 @@ export interface ClusterItem {
   color?: string
 
   /**
-   * The data-item-ids that belong to the cluster.
+   * The IDs of the data items that belong to the cluster.
    */
-  relatedItemIds: string[]
+  relatedIDs: string[]
 }

@@ -1,6 +1,6 @@
 import { DataItem } from './data-item'
 
-export interface ScatterplotEvent {
+export interface VdScatterplotEvent {
   /**
    * The dataItems which were selected/hovered.
    */
