@@ -1,6 +1,6 @@
+import { ClusterItem } from '../cluster-item'
+import { DataItem } from '../data-item'
 import { VdScatterplot } from '../vd-scatterplot'
-import {DataItem} from "../data-item";
-import {ClusterItem} from "../cluster-item";
 
 describe('VdScatterplot', () => {
   it('should initialize class', () => {
@@ -23,16 +23,16 @@ describe('VdScatterplot', () => {
       },
     ]
 
-
     const cluster: ClusterItem[] = [
       {
         id: '1',
-        relatedIDs: ["0", "4", "5"],
+        relatedIDs: ['0', '4', '5'],
       },
     ]
 
-    scatterplot.setData(data);
-    expect(function(){scatterplot.setCluster(cluster)}).toThrowError()
-
+    scatterplot.setData(data)
+    expect(function() {
+      scatterplot.setCluster(cluster)
+    }).toThrowError()
   })
 })
