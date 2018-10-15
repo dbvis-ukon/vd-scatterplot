@@ -23,7 +23,7 @@
 
 **● dataItems**: *[DataItem](_data_item_.dataitem.md)[]*
 
-*Defined in [vd-scatterplot-event.ts:7](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-event.ts#L7)*
+*Defined in [vd-scatterplot-event.ts:7](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-event.ts#L7)*
 
 The dataItems which were selected/hovered.
 
@@ -34,7 +34,7 @@ ___
 
 **● sourceElement**: *`HTMLElement`*
 
-*Defined in [vd-scatterplot-event.ts:9](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-event.ts#L9)*
+*Defined in [vd-scatterplot-event.ts:9](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-event.ts#L9)*
 
 ___
 

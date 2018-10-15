@@ -25,7 +25,7 @@
 **● color**: * `undefined` &#124; `string`
 *
 
-*Defined in [cluster-item.ts:10](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/cluster-item.ts#L10)*
+*Defined in [cluster-item.ts:10](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/cluster-item.ts#L10)*
 
 Color of this cluster, optional.
 
@@ -36,7 +36,7 @@ ___
 
 **● id**: *`string`*
 
-*Defined in [cluster-item.ts:5](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/cluster-item.ts#L5)*
+*Defined in [cluster-item.ts:5](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/cluster-item.ts#L5)*
 
 The id of the cluster.
 
@@ -47,7 +47,7 @@ ___
 
 **● relatedIDs**: *`string`[]*
 
-*Defined in [cluster-item.ts:15](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/cluster-item.ts#L15)*
+*Defined in [cluster-item.ts:15](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/cluster-item.ts#L15)*
 
 The IDs of the data items that belong to the cluster.
 

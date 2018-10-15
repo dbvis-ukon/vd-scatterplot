@@ -24,7 +24,7 @@
 
 **● id**: *`string`*
 
-*Defined in [data-item.ts:5](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/data-item.ts#L5)*
+*Defined in [data-item.ts:5](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/data-item.ts#L5)*
 
 The id
 
@@ -35,7 +35,7 @@ ___
 
 **● x**: *`number`*
 
-*Defined in [data-item.ts:10](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/data-item.ts#L10)*
+*Defined in [data-item.ts:10](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/data-item.ts#L10)*
 
 X-Position in the projection
 
@@ -46,7 +46,7 @@ ___
 
 **● y**: *`number`*
 
-*Defined in [data-item.ts:15](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/data-item.ts#L15)*
+*Defined in [data-item.ts:15](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/data-item.ts#L15)*
 
 Y-Position in the projection
 

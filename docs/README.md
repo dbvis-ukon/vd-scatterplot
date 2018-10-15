@@ -17,11 +17,11 @@ When activating the voronoi cells there is no brushing of data item groups possi
 Doc Links
 ---------
 
-(for doc and most important parts)
+(for total doc and most important parts)
 
-*   ["doc"](./docs/modules/)
-*   ["vd-scatterplot"](./docs/modules/_vd_scatterplot_.md)
-*   ["vd-scatterplot-options"](./docs/interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)
+*   ["doc"](./)
+*   ["vd-scatterplot"](./classes/_vd_scatterplot_.vdscatterplot.md)
+*   ["vd-scatterplot-options"](./interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)
 
 Example
 -------
@@ -69,11 +69,11 @@ scatterplot.observeHoverBrush().subscribe((evt: VdScatterplotEvent) => {
 
 ### External modules
 
-* ["cluster-item"](modules/_cluster_item_.md)
-* ["data-item"](modules/_data_item_.md)
-* ["vd-scatterplot"](modules/_vd_scatterplot_.md)
-* ["vd-scatterplot-event"](modules/_vd_scatterplot_event_.md)
-* ["vd-scatterplot-options"](modules/_vd_scatterplot_options_.md)
+* ["cluster-item"](./interfaces/_cluster_item_.clusteritem.md)
+* ["data-item"](./interfaces/_data_item_.dataitem.md)
+* ["vd-scatterplot"](./classes/_vd_scatterplot_.vdscatterplot.md)
+* ["vd-scatterplot-event"](./interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)
+* ["vd-scatterplot-options"](./interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)
 
 ---
 

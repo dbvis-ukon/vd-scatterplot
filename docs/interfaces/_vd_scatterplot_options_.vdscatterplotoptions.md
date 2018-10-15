@@ -28,7 +28,7 @@
 **● axis**: * `undefined` &#124; `true` &#124; `false`
 *
 
-*Defined in [vd-scatterplot-options.ts:20](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-options.ts#L20)*
+*Defined in [vd-scatterplot-options.ts:20](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-options.ts#L20)*
 
 Turn on/off the axis of the plot. Default: off.
 
@@ -40,7 +40,7 @@ ___
 **● clusterHulls**: * `undefined` &#124; `true` &#124; `false`
 *
 
-*Defined in [vd-scatterplot-options.ts:25](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-options.ts#L25)*
+*Defined in [vd-scatterplot-options.ts:25](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-options.ts#L25)*
 
 Turn on/off the drawing of polygonal hulls of the clusters (if clusters are given).
 
@@ -51,7 +51,7 @@ ___
 
 **● colormap**: *`string`[]*
 
-*Defined in [vd-scatterplot-options.ts:5](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-options.ts#L5)*
+*Defined in [vd-scatterplot-options.ts:5](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-options.ts#L5)*
 
 Set individual colormap for clusters.
 
@@ -63,7 +63,7 @@ ___
 **● height**: * `undefined` &#124; `number`
 *
 
-*Defined in [vd-scatterplot-options.ts:15](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-options.ts#L15)*
+*Defined in [vd-scatterplot-options.ts:15](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-options.ts#L15)*
 
 Set individual height of the scatterplot.
 
@@ -75,7 +75,7 @@ ___
 **● voronoiCells**: * `undefined` &#124; `true` &#124; `false`
 *
 
-*Defined in [vd-scatterplot-options.ts:30](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-options.ts#L30)*
+*Defined in [vd-scatterplot-options.ts:30](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-options.ts#L30)*
 
 Turn on/off the drawing of voronoi cells.
 
@@ -87,7 +87,7 @@ ___
 **● width**: * `undefined` &#124; `number`
 *
 
-*Defined in [vd-scatterplot-options.ts:10](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot-options.ts#L10)*
+*Defined in [vd-scatterplot-options.ts:10](https://github.com/dbvis-ukon/vd-scatterplot/blob/bccfbda/src/scatterplot/vd-scatterplot-options.ts#L10)*
 
 Set individual width of the scatterplot.
 
