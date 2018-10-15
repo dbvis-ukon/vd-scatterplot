@@ -14,10 +14,10 @@ have to be contained in the data (otherwise an error is thrown).
 When activating the voronoi cells there is no brushing of data item groups possible anymore.
 
 ## Doc Links
-(for doc and most important parts)
+(for total doc and most important parts)
 
-* ["doc"](./docs/modules/)
-* ["vd-scatterplot"](./docs/modules/_vd_scatterplot_.md)
+* ["doc"](./docs/)
+* ["vd-scatterplot"](./docs/classes/_vd_scatterplot_.vdscatterplot.md)
 * ["vd-scatterplot-options"](./docs/interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)
 
 
