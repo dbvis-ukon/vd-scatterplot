@@ -1,6 +1,6 @@
 {
   "name": "@dbvis/vd-scatterplot",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A simple scatterplot",
   "main": "dist/vd-scatterplot.js",
   "module": "lib/public_api.js",
@@ -17,7 +17,7 @@
     "node": ">=6.9"
   },
   "scripts": {
-    "cleanup": "shx rm -rf dist lib lib-esm lib-fesm @types coverage docs .dist",
+    "cleanup": "shx rm -rf dist lib lib-esm lib-fesm @types coverage .dist",
     "prebuild": "npm run cleanup && npm run verify",
     "build": " tsc && tsc --target es2017 --outDir lib-esm && webpack && shx rm -rf dist/styles.js*",
     "build:fesm:min": "uglifyjs lib-fesm/public_api.js --compress --mangle --source-map --output lib-fesm/public_api.min.js",
@@ -41,7 +41,7 @@
     "precommit": "lint-staged",
     "commitmsg": "commitlint -x @commitlint/config-conventional -e $GIT_PARAMS",
     "prepush": "npm run ts:style && npm run less:lint && npm run test:only-changed",
-    "prerelease": "npm run build",
+    "prerelease": "npm run build && npm run docs",
     "release": "standard-version",
     "postrelease": "npm run release:github && npm run release:npm",
     "release:github": "git push --no-verify --follow-tags origin master",
