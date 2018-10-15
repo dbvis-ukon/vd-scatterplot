@@ -35,7 +35,7 @@
 
 ⊕ **new VdScatterplot**(rootElement: *`HTMLElement`*, options: *[VdScatterplotOptions](../interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)*): [VdScatterplot](_vd_scatterplot_.vdscatterplot.md)
 
-*Defined in [vd-scatterplot.ts:91](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L91)*
+*Defined in [vd-scatterplot.ts:90](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L90)*
 
 Constructor of a VdScatterplot element.
 
@@ -58,9 +58,9 @@ ___
 
 ▸ **alignData**(targetData: *[DataItem](../interfaces/_data_item_.dataitem.md)[]*): `void`
 
-*Defined in [vd-scatterplot.ts:239](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L239)*
+*Defined in [vd-scatterplot.ts:259](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L259)*
 
-Align the scatterplot data towards given target data by checking if mirroring the x- and/or y-axis leads to a smaller (euclidean) distance between the data. The comparisons take place by elements of the arrays.
+This function is intended to adjust the scatterplot to given target data in the following sense: when having plots of data items with same id but of different projections, the x- and y-axes of the scatterplot at hand are flipped if this leads to a smaller (euclidean) distance between the data items. For example, this will cause scatterplots of a pca and mds to have the same shape which makes them better comparable.
 
 **Parameters:**
 
@@ -77,7 +77,9 @@ ___
 
 ▸ **observeHoverBrush**(): `Observable`<[VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)>
 
-*Defined in [vd-scatterplot.ts:131](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L131)*
+*Defined in [vd-scatterplot.ts:146](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L146)*
+
+Get observation of hovering a data item.
 
 **Returns:** `Observable`<[VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)>
 
@@ -88,7 +90,9 @@ ___
 
 ▸ **observeSelectionBrush**(): `Observable`<[VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)>
 
-*Defined in [vd-scatterplot.ts:123](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L123)*
+*Defined in [vd-scatterplot.ts:130](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L130)*
+
+Get observation of selecting a group of data items.
 
 **Returns:** `Observable`<[VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)>
 
@@ -99,7 +103,7 @@ ___
 
 ▸ **resize**(newWidth: *`number`*, newHeight: *`number`*): `void`
 
-*Defined in [vd-scatterplot.ts:230](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L230)*
+*Defined in [vd-scatterplot.ts:247](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L247)*
 
 Resizes the height and width of plot.
 
@@ -119,13 +123,15 @@ ___
 
 ▸ **sendHover**(scatterplotEvent: *[VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)*): `void`
 
-*Defined in [vd-scatterplot.ts:127](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L127)*
+*Defined in [vd-scatterplot.ts:138](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L138)*
+
+Send the data item that was hovered to observers.
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| scatterplotEvent | [VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md) |
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| scatterplotEvent | [VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md) |   |
 
 **Returns:** `void`
 
@@ -136,13 +142,15 @@ ___
 
 ▸ **sendSelection**(scatterplotEvent: *[VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md)*): `void`
 
-*Defined in [vd-scatterplot.ts:119](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L119)*
+*Defined in [vd-scatterplot.ts:122](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L122)*
+
+Send selection of a group of dataitems to observers.
 
 **Parameters:**
 
-| Param | Type |
-| ------ | ------ |
-| scatterplotEvent | [VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md) |
+| Param | Type | Description |
+| ------ | ------ | ------ |
+| scatterplotEvent | [VdScatterplotEvent](../interfaces/_vd_scatterplot_event_.vdscatterplotevent.md) |   |
 
 **Returns:** `void`
 
@@ -153,9 +161,9 @@ ___
 
 ▸ **setCluster**(cluster: *[ClusterItem](../interfaces/_cluster_item_.clusteritem.md)[]*): `void`
 
-*Defined in [vd-scatterplot.ts:152](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L152)*
+*Defined in [vd-scatterplot.ts:168](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L168)*
 
-Set the cluster - if available - for the scatterplot.
+Set the cluster for the scatterplot. All item ids related to a cluster have to be contained in the data of the scatterplot.
 
 **Parameters:**
 
@@ -172,9 +180,9 @@ ___
 
 ▸ **setData**(data: *[DataItem](../interfaces/_data_item_.dataitem.md)[]*): `void`
 
-*Defined in [vd-scatterplot.ts:139](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L139)*
+*Defined in [vd-scatterplot.ts:154](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L154)*
 
-Set the data for the scatterplot.
+Set data for the scatterplot.
 
 **Parameters:**
 
@@ -191,9 +199,9 @@ ___
 
 ▸ **setOptions**(options: *[VdScatterplotOptions](../interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)*): `void`
 
-*Defined in [vd-scatterplot.ts:182](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L182)*
+*Defined in [vd-scatterplot.ts:199](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L199)*
 
-Set/Change options externally from constructor
+Set/Change options externally from constructor. NOTE: If voronoi cells are activated, there is no brush/group selection possible.
 
 **Parameters:**
 
@@ -210,7 +218,7 @@ ___
 
 ▸ **updateTitle**(title: *`string`*): `void`
 
-*Defined in [vd-scatterplot.ts:279](https://github.com/dbvis-ukon/vd-scatterplot/blob/5784617/src/scatterplot/vd-scatterplot.ts#L279)*
+*Defined in [vd-scatterplot.ts:299](https://github.com/dbvis-ukon/vd-scatterplot/blob/74ab5b9/src/scatterplot/vd-scatterplot.ts#L299)*
 
 Add a title to the scatterplot below the diagram.
 

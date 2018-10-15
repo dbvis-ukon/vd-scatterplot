@@ -7,7 +7,21 @@ This module is for easily plotting data in scatterplots using D3. It provides op
 Assumptions
 -----------
 
-A data point has at least the attributes "id", "x", and "y", whereas the id is assumed to be unique.
+A data point has at least the attributes "id", "x", and "y", whereas the id is assumed to be unique. All occurrings of item ids related to a cluster have to be contained in the data (otherwise an error is thrown).
+
+Notes
+-----
+
+When activating the voronoi cells there is no brushing of data item groups possible anymore.
+
+Doc Links
+---------
+
+(for doc and most important parts)
+
+*   ["doc"](./docs/modules/)
+*   ["vd-scatterplot"](./docs/modules/_vd_scatterplot_.md)
+*   ["vd-scatterplot-options"](./docs/interfaces/_vd_scatterplot_options_.vdscatterplotoptions.md)
 
 Example
 -------
@@ -43,6 +57,12 @@ scatterplot.setData(data)
 scatterplot.setCluster(cluster);
 
 scatterplot.setOptions({axis: true, clusterHulls: true, voronoieCells: false, width: 500, height:500});
+
+scatterplot.observeHoverBrush().subscribe((evt: VdScatterplotEvent) => {
+  if(evt.dataItems.length > 0) {
+    console.log("observing the hovering of ", evt.dataItems);
+  }
+})
 ```
 
 ## Index

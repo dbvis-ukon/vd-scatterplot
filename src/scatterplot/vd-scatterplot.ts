@@ -43,12 +43,12 @@ export class VdScatterplot {
    */
   private mapDataItems: Map<string, DataItem[]> = new Map<string, DataItem[]>()
   /**
-   * map data item to related cluster id
+   * map data item to its related cluster id
    * @type {Map<DataItem, string>}
    */
   private mapClusterID: Map<DataItem, string> = new Map<DataItem, string>()
   /**
-   * Map data id to data item.
+   * Map each data id to its data item.
    * @type {Map<string, DataItem>}
    */
   private mapData: Map<string, DataItem> = new Map<string, DataItem>()
@@ -70,7 +70,6 @@ export class VdScatterplot {
   private xAxis: Axis<number> | undefined
   private yAxis: Axis<number> | undefined
 
-  // private voronoiGroup: Selection<SVGGElement, DataItem, null, undefined>
   private voronoiLayer: Selection<SVGElement, DataItem, null, undefined> | undefined
   private clusterHullLayer: Selection<SVGElement, DataItem, null, undefined> | undefined
   private voronoiCells: VoronoiDiagram<DataItem> | undefined
@@ -116,24 +115,40 @@ export class VdScatterplot {
     })
   }
 
+  /**
+   * Send selection of a group of dataitems to observers.
+   * @param {VdScatterplotEvent} scatterplotEvent
+   */
   public sendSelection(scatterplotEvent: VdScatterplotEvent): void {
     this.brushSelectionSubject.next(scatterplotEvent)
   }
 
+  /**
+   * Get observation of selecting a group of data items.
+   * @returns {Observable<VdScatterplotEvent>}
+   */
   public observeSelectionBrush(): Observable<VdScatterplotEvent> {
     return this.brushSelectionObservable
   }
 
+  /**
+   * Send the data item that was hovered to observers.
+   * @param {VdScatterplotEvent} scatterplotEvent
+   */
   public sendHover(scatterplotEvent: VdScatterplotEvent): void {
     this.brushHoverSubject.next(scatterplotEvent)
   }
 
+  /**
+   * Get observation of hovering a data item.
+   * @returns {Observable<VdScatterplotEvent>}
+   */
   public observeHoverBrush(): Observable<VdScatterplotEvent> {
     return this.brushHoverObservable
   }
 
   /**
-   * Set the data for the scatterplot.
+   * Set data for the scatterplot.
    * @param {DataItem[]} data
    */
   public setData(data: DataItem[]): void {
@@ -146,7 +161,8 @@ export class VdScatterplot {
   }
 
   /**
-   * Set the cluster - if available - for the scatterplot.
+   * Set the cluster for the scatterplot.
+   * All item ids related to a cluster have to be contained in the data of the scatterplot.
    * @param {ClusterItem[]} cluster
    */
   public setCluster(cluster: ClusterItem[]): void {
@@ -176,7 +192,8 @@ export class VdScatterplot {
   }
 
   /**
-   * Set/Change options externally from constructor
+   * Set/Change options externally from constructor.
+   * NOTE: If voronoi cells are activated, there is no brush/group selection possible.
    * @param {Options} options
    */
   public setOptions(options: VdScatterplotOptions): void {
@@ -232,8 +249,11 @@ export class VdScatterplot {
   }
 
   /**
-   * Align the scatterplot data towards given target data by checking if mirroring the x- and/or y-axis
-   * leads to a smaller (euclidean) distance between the data. The comparisons take place by elements of the arrays.
+   * This function is intended to adjust the scatterplot to given target data in the following sense:
+   * when having plots of data items with same id but of different projections, the x- and y-axes of the
+   * scatterplot at hand are flipped if this leads to a smaller (euclidean) distance between the data items.
+   * For example, this will cause scatterplots of a pca and mds to have the same shape which makes them
+   * better comparable.
    * @param {DataItem[]} targetData
    */
   public alignData(targetData: DataItem[]): void {
@@ -293,7 +313,7 @@ export class VdScatterplot {
   }
 
   /**
-   * Updates the appearance of the hovered element and displays a tooltip with information about the element.
+   * Updates the appearance of the hovered element.
    * @param {VdScatterplotEvent} scatterplotEvent
    */
   private receiveHover(scatterplotEvent: VdScatterplotEvent): void {
@@ -308,7 +328,7 @@ export class VdScatterplot {
   }
 
   /**
-   * Draws/updates the scatterplot according to options
+   * Draws/updates the scatterplot according to options, or if new data/cluster are set, and so on..
    */
   private update(): void {
     if (!this.plot) {
@@ -583,7 +603,7 @@ export class VdScatterplot {
   }
 
   /**
-   * Plot the voronoi cells.
+   * Plot the voronoi cells and add hovering function.
    */
   private plotVoronoiCells(): void {
     this.computeVoronoi()
@@ -680,7 +700,7 @@ export class VdScatterplot {
   }
 
   /**
-   * Updates the appearance of the selected elements and displays a tooltip with information about the elements.
+   * Updates the appearance of the selected elements.
    * @param {VdScatterplotEvent} scatterplotEvent
    */
   private receiveSelection(scatterplotEvent: VdScatterplotEvent | null): void {
