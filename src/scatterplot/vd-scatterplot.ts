@@ -9,11 +9,11 @@ import { voronoi, VoronoiDiagram, VoronoiLayout, VoronoiPolygon } from 'd3-voron
 import { Observable, Subject } from 'rxjs'
 import { ClusterItem } from './cluster-item'
 import { DataItem } from './data-item'
-import { ScatterplotEvent } from './scatterplot-event'
-import { ScatterplotOptions } from './scatterplot-options'
+import { VdScatterplotEvent } from './vd-scatterplot-event'
+import { VdScatterplotOptions } from './vd-scatterplot-options'
 
-export class Scatterplot {
-  private static DEFAULT_OPTIONS: ScatterplotOptions = {
+export class VdScatterplot {
+  private static DEFAULT_OPTIONS: VdScatterplotOptions = {
     height: 225,
     width: 225,
     colormap: [
@@ -37,7 +37,22 @@ export class Scatterplot {
   private plot: Selection<SVGElement, DataItem, null, undefined>
   private data: DataItem[] = []
   private cluster: ClusterItem[] | undefined
-  private options: ScatterplotOptions = Scatterplot.DEFAULT_OPTIONS
+  /**
+   * map cluster id to related data items of cluster
+   * @type {Map<string, DataItem[]>}
+   */
+  private mapDataItems: Map<string, DataItem[]> = new Map<string, DataItem[]>()
+  /**
+   * map data item to its related cluster id
+   * @type {Map<DataItem, string>}
+   */
+  private mapClusterID: Map<DataItem, string> = new Map<DataItem, string>()
+  /**
+   * Map each data id to its data item.
+   * @type {Map<string, DataItem>}
+   */
+  private mapData: Map<string, DataItem> = new Map<string, DataItem>()
+  private options: VdScatterplotOptions = VdScatterplot.DEFAULT_OPTIONS
 
   private width = 0
   private height = 0
@@ -55,7 +70,6 @@ export class Scatterplot {
   private xAxis: Axis<number> | undefined
   private yAxis: Axis<number> | undefined
 
-  // private voronoiGroup: Selection<SVGGElement, DataItem, null, undefined>
   private voronoiLayer: Selection<SVGElement, DataItem, null, undefined> | undefined
   private clusterHullLayer: Selection<SVGElement, DataItem, null, undefined> | undefined
   private voronoiCells: VoronoiDiagram<DataItem> | undefined
@@ -68,19 +82,19 @@ export class Scatterplot {
    */
   private brush: BrushBehavior<DataItem> | undefined
 
-  private brushSelectionSubject: Subject<ScatterplotEvent> = new Subject<ScatterplotEvent>()
-  private brushSelectionObservable: Observable<ScatterplotEvent> = this.brushSelectionSubject.asObservable()
+  private brushSelectionSubject: Subject<VdScatterplotEvent> = new Subject<VdScatterplotEvent>()
+  private brushSelectionObservable: Observable<VdScatterplotEvent> = this.brushSelectionSubject.asObservable()
 
   // # another UGLY HACK
-  private brushHoverSubject: Subject<ScatterplotEvent> = new Subject<ScatterplotEvent>()
-  private brushHoverObservable: Observable<ScatterplotEvent> = this.brushHoverSubject.asObservable()
+  private brushHoverSubject: Subject<VdScatterplotEvent> = new Subject<VdScatterplotEvent>()
+  private brushHoverObservable: Observable<VdScatterplotEvent> = this.brushHoverSubject.asObservable()
 
   /**
-   * Constructor of a Scatterplot element.
+   * Constructor of a VdScatterplot element.
    * @param {HTMLElement} rootElement
    * @param {Options} options
    */
-  constructor(rootElement: HTMLElement, options: ScatterplotOptions) {
+  constructor(rootElement: HTMLElement, options: VdScatterplotOptions) {
     this.rootElement = rootElement
 
     this.plot = select<HTMLElement, DataItem>(this.rootElement)
@@ -93,52 +107,84 @@ export class Scatterplot {
 
     this.setOptions(options)
 
-    this.observeSelectionBrush().subscribe((scatterplotEvent: ScatterplotEvent) => {
+    this.observeSelectionBrush().subscribe((scatterplotEvent: VdScatterplotEvent) => {
       this.receiveSelection(scatterplotEvent)
     })
-    this.observeHoverBrush().subscribe((scatterplotEvent: ScatterplotEvent) => {
+    this.observeHoverBrush().subscribe((scatterplotEvent: VdScatterplotEvent) => {
       this.receiveHover(scatterplotEvent)
     })
   }
 
-  public sendSelection(scatterplotEvent: ScatterplotEvent): void {
+  /**
+   * Send selection of a group of dataitems to observers.
+   * @param {VdScatterplotEvent} scatterplotEvent
+   */
+  public sendSelection(scatterplotEvent: VdScatterplotEvent): void {
     this.brushSelectionSubject.next(scatterplotEvent)
   }
 
-  public observeSelectionBrush(): Observable<ScatterplotEvent> {
+  /**
+   * Get observation of selecting a group of data items.
+   * @returns {Observable<VdScatterplotEvent>}
+   */
+  public observeSelectionBrush(): Observable<VdScatterplotEvent> {
     return this.brushSelectionObservable
   }
 
-  public sendHover(scatterplotEvent: ScatterplotEvent): void {
+  /**
+   * Send the data item that was hovered to observers.
+   * @param {VdScatterplotEvent} scatterplotEvent
+   */
+  public sendHover(scatterplotEvent: VdScatterplotEvent): void {
     this.brushHoverSubject.next(scatterplotEvent)
   }
 
-  public observeHoverBrush(): Observable<ScatterplotEvent> {
+  /**
+   * Get observation of hovering a data item.
+   * @returns {Observable<VdScatterplotEvent>}
+   */
+  public observeHoverBrush(): Observable<VdScatterplotEvent> {
     return this.brushHoverObservable
   }
 
   /**
-   * Set the data for the scatterplot.
+   * Set data for the scatterplot.
    * @param {DataItem[]} data
    */
   public setData(data: DataItem[]): void {
+    this.mapData.clear()
     this.data = data
+    for (const d of data) {
+      this.mapData.set(d.id, d)
+    }
     this.update()
   }
 
   /**
-   * Set the cluster - if available - for the scatterplot.
+   * Set the cluster for the scatterplot.
+   * All item ids related to a cluster have to be contained in the data of the scatterplot.
    * @param {ClusterItem[]} cluster
    */
   public setCluster(cluster: ClusterItem[]): void {
-    // check if data items from cluster are present in actual data
-    // check by id equality
-    for (const c of cluster) {
-      c.relatedItems = c.relatedItems.filter((d: DataItem) => {
-        const t: string[] = this.data.map(a => a.id)
+    this.mapClusterID.clear()
+    this.mapDataItems.clear()
 
-        return t.includes(d.id)
-      })
+    // check if the related IDs are contained in the data and filter
+    // if not -> throw error
+    // insert the items in the maps
+    for (const c of cluster) {
+      const items: DataItem[] = new Array<DataItem>()
+
+      for (const d of c.relatedIDs) {
+        const item: DataItem | undefined = this.mapData.get(d)
+        if (item) {
+          items.push(item)
+          this.mapClusterID.set(item, c.id)
+        } else {
+          throw new Error("there is a data id in a cluster which is not contained in the scatterplot's data!")
+        }
+      }
+      this.mapDataItems.set(c.id, items)
     }
 
     this.cluster = cluster
@@ -146,11 +192,12 @@ export class Scatterplot {
   }
 
   /**
-   * Set/Change options externally from constructor
+   * Set/Change options externally from constructor.
+   * NOTE: If voronoi cells are activated, there is no brush/group selection possible.
    * @param {Options} options
    */
-  public setOptions(options: ScatterplotOptions): void {
-    this.options = Object.assign({}, Scatterplot.DEFAULT_OPTIONS, this.options, options)
+  public setOptions(options: VdScatterplotOptions): void {
+    this.options = Object.assign({}, VdScatterplot.DEFAULT_OPTIONS, this.options, options)
 
     // set the colormap which should be used for possible clusters
     this.colormap = this.options.colormap as string[]
@@ -202,8 +249,11 @@ export class Scatterplot {
   }
 
   /**
-   * Align the scatterplot data towards given target data by checking if mirroring the x- and/or y-axis
-   * leads to a smaller (euclidean) distance between the data. The comparisons take place by elements of the arrays.
+   * This function is intended to adjust the scatterplot to given target data in the following sense:
+   * when having plots of data items with same id but of different projections, the x- and y-axes of the
+   * scatterplot at hand are flipped if this leads to a smaller (euclidean) distance between the data items.
+   * For example, this will cause scatterplots of a pca and mds to have the same shape which makes them
+   * better comparable.
    * @param {DataItem[]} targetData
    */
   public alignData(targetData: DataItem[]): void {
@@ -263,10 +313,10 @@ export class Scatterplot {
   }
 
   /**
-   * Updates the appearance of the hovered element and displays a tooltip with information about the element.
-   * @param {ScatterplotEvent} scatterplotEvent
+   * Updates the appearance of the hovered element.
+   * @param {VdScatterplotEvent} scatterplotEvent
    */
-  private receiveHover(scatterplotEvent: ScatterplotEvent): void {
+  private receiveHover(scatterplotEvent: VdScatterplotEvent): void {
     // reset appearance of all circles
     this.plot.selectAll('circle.datapoint').classed('selected', false)
 
@@ -275,16 +325,10 @@ export class Scatterplot {
       .selectAll<SVGCircleElement, DataItem>('circle.datapoint')
       .data(scatterplotEvent.dataItems, (d: DataItem) => d.id)
       .classed('selected', true)
-
-    // if (this.circleSelection) {
-    //   this.circleSelection
-    //     .filter((d: DataItem) => scatterplotEvent.dataItems.map((i: DataItem) => i.id).includes(d.id))
-    //     .classed('selected', true)
-    // }
   }
 
   /**
-   * Draws/updates the scatterplot according to options
+   * Draws/updates the scatterplot according to options, or if new data/cluster are set, and so on..
    */
   private update(): void {
     if (!this.plot) {
@@ -385,31 +429,23 @@ export class Scatterplot {
    * @returns {string} the color string
    */
   private getColorOfDataItem(d: DataItem): string {
+    const clusterID: string | undefined = this.mapClusterID.get(d)
     // check whether the clusters for this scatterplot are set
-    if (this.cluster !== undefined) {
-      // find the cluster number the item belongs to
-      let clusterIndex: number
-      outerloop: for (clusterIndex = 0; clusterIndex < this.cluster.length; clusterIndex++) {
-        const clusterItems: DataItem[] = this.cluster[clusterIndex].relatedItems
-
-        for (const entry of clusterItems) {
-          if (entry.id === d.id) {
-            break outerloop
-          }
-        }
-      }
-
-      // case: data item is noise in DBSCAN / cluster is not set for data point
-      if (clusterIndex >= this.cluster.length) {
+    if (this.cluster !== undefined && clusterID !== undefined) {
+      // get index of cluster id
+      const ind: number = this.cluster.map((c: ClusterItem) => c.id).indexOf(clusterID)
+      // if id is not contained in cluster ids -> color black
+      // or case: data item is noise in DBSCAN / cluster is not set for data point
+      if (ind < 0 || ind >= this.cluster.length) {
         return 'black'
       }
 
       // check whether the color is predefined
-      if (this.cluster[clusterIndex].color) {
-        return this.cluster[clusterIndex].color || 'black'
+      if (this.cluster[ind].color) {
+        return this.cluster[ind].color || 'black'
       } else {
         // take an appropriate color from the colormap (using modulo in case for #clusters > #colors
-        return this.colormap[clusterIndex % this.colormap.length]
+        return this.colormap[ind % this.colormap.length]
       }
     } else {
       return 'black'
@@ -424,37 +460,18 @@ export class Scatterplot {
       return
     }
 
-    if (this.cluster && this.cluster.length > 0) {
-      // check if cluster items are identical in x/y position of contained data ->
-      // otherwise strange clusterhulls are drawn
-      for (const c of this.cluster) {
-        for (const d of c.relatedItems) {
-          // get data item from data with same id
-          const de: DataItem = this.data.filter((i: DataItem) => {
-            return i.id === d.id
-          })[0]
+    if (this.cluster) {
+      const clusterPath = (c: ClusterItem) => {
+        const items: DataItem[] | undefined = this.mapDataItems.get(c.id)
+        if (items) {
+          const hull = items.map((d: DataItem) => {
+            return [this.xScale ? this.xScale(d.x) : 0, this.yScale ? this.yScale(d.y) : 0] as [number, number]
+          })
 
-          if (!de) {
-            // id is not contained
-            return
-          }
-
-          // compare x/y position
-          const diff: number = Math.max(Math.abs(de.x - d.x), Math.abs(de.y - d.y))
-          if (diff > 0.01) {
-            return
-          }
+          return 'M' + (polygonHull(hull) as [number, number][]).join('L') + 'Z'
+        } else {
+          return null
         }
-      }
-
-      // tslint:disable-next-line
-      const cluster = this.cluster as ClusterItem[]
-      const clusterPath = (d: ClusterItem) => {
-        const hull = d.relatedItems.map(i => {
-          return [this.xScale ? this.xScale(i.x) : 0, this.yScale ? this.yScale(i.y) : 0] as [number, number]
-        })
-
-        return 'M' + (polygonHull(hull) as [number, number][]).join('L') + 'Z'
       }
 
       // this.plot
@@ -463,23 +480,23 @@ export class Scatterplot {
           .selectAll<SVGPathElement, ClusterItem[]>('path.hull')
           .data<ClusterItem>(
             this.cluster.filter(g => {
-              return g.relatedItems.length > 2
+              return g.relatedIDs.length > 2
             })
           )
           .enter()
           .insert('path', 'circle')
           .attr('d', clusterPath)
-          .attr('id', (d: ClusterItem) => {
-            return 'path_' + d.id
+          .attr('id', (c: ClusterItem) => {
+            return 'path_' + c.id
           })
-          .style('fill', (d: ClusterItem) => {
+          .style('fill', (c: ClusterItem) => {
             let color: string | null = null
 
-            if (d.color) {
-              color = d.color
+            if (c.color) {
+              color = c.color
             } else if (this.cluster) {
               for (let i = 0; i < this.cluster.length; i++) {
-                if (d.id === this.cluster[i].id) {
+                if (c.id === this.cluster[i].id) {
                   const noOfClusterColors = this.colormap.length
 
                   color = this.colormap[i % noOfClusterColors]
@@ -491,15 +508,17 @@ export class Scatterplot {
           })
           .style('opacity', 0.1)
           .classed('hull', true)
-          .on('mouseover', (d: ClusterItem) => {
-            // shows tooltip of all cluster items
-            this.sendHover({
-              dataItems: d.relatedItems,
-              sourceElement: event.target,
-            })
+          .on('mouseover', (c: ClusterItem) => {
+            const items: DataItem[] | undefined = this.mapDataItems.get(c.id)
+            if (items) {
+              this.sendHover({
+                dataItems: items,
+                sourceElement: event.target,
+              })
 
-            // highlights the cluster hull itself
-            this.plot.select('#path_' + d.id).style('opacity', 0.4)
+              // highlights the cluster hull itself
+              this.plot.select('#path_' + c.id).style('opacity', 0.4)
+            }
           })
           .on('mouseout', (d: ClusterItem) => {
             // hides the tooltip
@@ -584,7 +603,7 @@ export class Scatterplot {
   }
 
   /**
-   * Plot the voronoi cells.
+   * Plot the voronoi cells and add hovering function.
    */
   private plotVoronoiCells(): void {
     this.computeVoronoi()
@@ -661,15 +680,6 @@ export class Scatterplot {
           }
 
           const targetElement: HTMLElement = this.plot.select<HTMLElement>('rect.selection').node() as HTMLElement
-          // get the rectangle of selection for tooltip
-          // let evtTarget
-          // const rectSelect = this.plot.selectAll<SVGRectElement, DataItem>('rect.selection').filter(function(d, i) {
-          //   if (i === 0) {
-          //     evtTarget = this
-          //   }
-
-          //   return i === 0
-          // })
 
           this.sendSelection({ dataItems: selectedDataItems, sourceElement: targetElement })
         }
@@ -690,10 +700,10 @@ export class Scatterplot {
   }
 
   /**
-   * Updates the appearance of the selected elements and displays a tooltip with information about the elements.
-   * @param {ScatterplotEvent} scatterplotEvent
+   * Updates the appearance of the selected elements.
+   * @param {VdScatterplotEvent} scatterplotEvent
    */
-  private receiveSelection(scatterplotEvent: ScatterplotEvent | null): void {
+  private receiveSelection(scatterplotEvent: VdScatterplotEvent | null): void {
     // reset the appearance of all data items
     this.plot.selectAll('circle.datapoint').classed('selected', false)
 

@@ -1,4 +1,4 @@
-# VdTooltip
+# VdScatterplot
 
 The library template is adapted from `https://github.com/wjentner/typescript-lib-starter`
 

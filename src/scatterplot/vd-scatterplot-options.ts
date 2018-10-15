@@ -1,4 +1,4 @@
-export interface ScatterplotOptions {
+export interface VdScatterplotOptions {
   /**
    * Set individual colormap for clusters.
    */
