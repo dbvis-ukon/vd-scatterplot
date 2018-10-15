@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git@github.com:dbvis-ukon/vd-scatterplot.git"
   },
-  "author": "Wolfgang Jentner <wolfgang.jentner@uni.kn>",
+  "author": "Gordana Marmulla <gordana.marmulla@uni.kn>, Wolfgang Jentner <wolfgang.jentner@uni.kn>",
   "license": "MIT",
   "engines": {
     "node": ">=6.9"
