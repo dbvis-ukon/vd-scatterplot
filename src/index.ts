@@ -1,9 +1,8 @@
 import { ClusterItem } from './scatterplot/cluster-item'
 import { DataItem } from './scatterplot/data-item'
 import { VdScatterplot } from './scatterplot/vd-scatterplot'
-import {VdScatterplotEvent} from "./scatterplot/vd-scatterplot-event";
+import { VdScatterplotEvent } from './scatterplot/vd-scatterplot-event'
 import './styles.less'
-
 
 const data: DataItem[] = [
   {
@@ -60,7 +59,7 @@ scatterplot.setData(data)
 scatterplot.setCluster(cluster)
 
 scatterplot.observeHoverBrush().subscribe((evt: VdScatterplotEvent) => {
-  if(evt.dataItems.length > 0) {
-    console.log("observing the hovering of ", evt.dataItems);
+  if (evt.dataItems.length > 0) {
+    console.log('observing the hovering of ', evt.dataItems)
   }
 })
