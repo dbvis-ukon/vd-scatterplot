@@ -1,8 +1,9 @@
 import { ClusterItem } from './scatterplot/cluster-item'
 import { DataItem } from './scatterplot/data-item'
 import { VdScatterplot } from './scatterplot/vd-scatterplot'
-import './styles.less'
 import {VdScatterplotEvent} from "./scatterplot/vd-scatterplot-event";
+import './styles.less'
+
 
 const data: DataItem[] = [
   {
