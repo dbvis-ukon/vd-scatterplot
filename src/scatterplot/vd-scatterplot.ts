@@ -1,14 +1,17 @@
-import { extent } from 'd3-array'
+import {extent, max, merge, min} from 'd3-array'
 import { Axis, axisBottom, AxisContainerElement, axisLeft } from 'd3-axis'
 import { brush, BrushBehavior } from 'd3-brush'
 import { polygonHull } from 'd3-polygon'
 import { scaleLinear, ScaleLinear } from 'd3-scale'
 import { event, select, selectAll, Selection } from 'd3-selection'
+import {line} from "d3-shape";
 import { transition } from 'd3-transition'
 import { voronoi, VoronoiDiagram, VoronoiLayout, VoronoiPolygon } from 'd3-voronoi'
 import { Observable, Subject } from 'rxjs'
 import { ClusterItem } from './cluster-item'
 import { DataItem } from './data-item'
+import {LineItem} from "./line-item";
+import {LineObject} from "./line-object";
 import { VdScatterplotEvent } from './vd-scatterplot-event'
 import { VdScatterplotOptions } from './vd-scatterplot-options'
 
@@ -37,6 +40,14 @@ export class VdScatterplot {
   private plot: Selection<SVGElement, DataItem, null, undefined>
   private data: DataItem[] = []
   private cluster: ClusterItem[] | undefined
+
+  /**
+   * A line-object with id "i" consists of multiple line-items [{x:, y:}, {x:, y: },...]; it can be
+   * related to one specific data item with id "i", and if so, it will have the same color as the data item.
+   * The line can for example represent a process flow of this data item dependent on changing a
+   * specific parameter. If the id is not related to a data item, the line will be black.
+   */
+  private lines: LineObject[] = []
   /**
    * map cluster id to related data items of cluster
    * @type {Map<string, DataItem[]>}
@@ -64,8 +75,8 @@ export class VdScatterplot {
   private xMiddle = 0
   private yMiddle = 0
 
-  private xScale: ScaleLinear<number, number> | undefined
-  private yScale: ScaleLinear<number, number> | undefined
+  private xScale: ScaleLinear<number, number> = scaleLinear()
+  private yScale: ScaleLinear<number, number> = scaleLinear()
 
   private xAxis: Axis<number> | undefined
   private yAxis: Axis<number> | undefined
@@ -158,6 +169,15 @@ export class VdScatterplot {
       this.mapData.set(d.id, d)
     }
     this.update()
+  }
+
+  /**
+   * Set data lines of scatterplot
+   * @param {LineObject[]} lines
+   */
+  public setLines(lines: LineObject[]): void {
+    this.lines = lines;
+    this.update();
   }
 
   /**
@@ -319,12 +339,24 @@ export class VdScatterplot {
   private receiveHover(scatterplotEvent: VdScatterplotEvent): void {
     // reset appearance of all circles
     this.plot.selectAll('circle.datapoint').classed('selected', false)
+    this.plot.selectAll('.linetrace').classed('selected', false);
 
     // change class of selected datapoints
     this.plot
       .selectAll<SVGCircleElement, DataItem>('circle.datapoint')
       .data(scatterplotEvent.dataItems, (d: DataItem) => d.id)
       .classed('selected', true)
+
+    // change appearance of related line - if available
+    if(this.lines.length > 0 && scatterplotEvent.dataItems.length > 0){
+      this.plot
+        .selectAll('.linetrace')
+        .data(this.lines.map((lo: LineObject) => lo.id))
+        .classed('selected', (d) => {
+          return d === scatterplotEvent.dataItems[0].id
+        });
+    }
+
   }
 
   /**
@@ -337,7 +369,7 @@ export class VdScatterplot {
       return
     }
 
-    this.calculateExtent()
+    this.calculateExtent();
     this.calculateMiddle()
     this.scaleData()
 
@@ -405,6 +437,10 @@ export class VdScatterplot {
       .on('mouseout', () => {
         this.sendHover({ dataItems: [], sourceElement: event.target })
       })
+
+    if(this.lines.length > 0){
+      this.drawLines();
+    }
 
     if (this.options.voronoiCells === true) {
       this.voronoiCells = undefined
@@ -511,7 +547,8 @@ export class VdScatterplot {
           .on('mouseover', (c: ClusterItem) => {
             const items: DataItem[] | undefined = this.mapDataItems.get(c.id)
             if (items) {
-              this.sendHover({
+              // send selection because this might be multiple data items
+              this.sendSelection({
                 dataItems: items,
                 sourceElement: event.target,
               })
@@ -522,7 +559,7 @@ export class VdScatterplot {
           })
           .on('mouseout', (d: ClusterItem) => {
             // hides the tooltip
-            this.sendHover({ dataItems: [], sourceElement: event.target })
+            this.sendSelection({ dataItems: [], sourceElement: event.target })
 
             // reset the hull's appearance
             this.plot.select('#path_' + d.id).style('opacity', 0.1)
@@ -535,8 +572,26 @@ export class VdScatterplot {
    *  Calculate the extent for the plot.
    */
   private calculateExtent(): void {
-    this.xExtent = extent(this.data, d => d.x)
-    this.yExtent = extent(this.data, d => d.y)
+
+
+    if(this.lines.length === 0){
+      this.xExtent = extent(this.data, d => d.x)
+      this.yExtent = extent(this.data, d => d.y)
+    } else {
+
+      // if there are lines, extent might have to be adapted
+      const dataXExtent = extent(this.data, d => d.x)
+      const dataYExtent = extent(this.data, d => d.y)
+
+      const m: LineItem[] = merge<LineItem>(this.lines.map((l: LineObject) => l.data));
+
+      const lineXExtent = extent(m, d => d.x);
+      const lineYExtent = extent(m, d => d.y);
+
+      this.xExtent = extent([dataXExtent[0], dataXExtent[1], lineXExtent[0], lineXExtent[1]], d => d);
+      this.yExtent = extent([dataYExtent[0], dataYExtent[1], lineYExtent[0], lineYExtent[1]], d => d);
+    }
+
   }
 
   /**
@@ -706,6 +761,7 @@ export class VdScatterplot {
   private receiveSelection(scatterplotEvent: VdScatterplotEvent | null): void {
     // reset the appearance of all data items
     this.plot.selectAll('circle.datapoint').classed('selected', false)
+    this.plot.selectAll('.linetrace').classed('selected', false)
 
     if (scatterplotEvent === null) {
       this.plot.selectAll('rect.selection').style('opacity', 0.5)
@@ -714,6 +770,64 @@ export class VdScatterplot {
         .selectAll<SVGCircleElement, DataItem>('circle.datapoint')
         .data(scatterplotEvent.dataItems, (d: DataItem) => d.id)
         .classed('selected', true)
+
+      // select related lines - if available
+      if(this.lines.length > 0 && scatterplotEvent.dataItems.length > 0){
+        this.plot
+          .selectAll<SVGLineElement, LineObject>('.linetrace')
+          .data<LineItem[]>(this.lines.map((lo: LineObject) => lo.data))
+          .filter((d,i) => {
+            const lineID: string = this.lines[i].id;
+
+            return scatterplotEvent.dataItems.map((data: DataItem) => data.id).includes(lineID)
+          })
+          .classed('selected', true);
+      }
     }
   }
+
+  /**
+   * Draw lines contained in scatterplot
+   */
+  private drawLines(): void {
+
+    const svg = this.plot.append("svg");
+
+    const l = line<LineItem>()
+      .x((d: LineItem) => this.xScale(d.x))
+      .y((d: LineItem) => this.yScale(d.y));
+
+    svg.selectAll(".line")
+      .data<LineItem[]>(this.lines.map((lo: LineObject) => lo.data))
+      .enter().append("path")
+      .attr("class", "linetrace")
+      .style("stroke-dasharray", "2 2")
+      .attr("d", l)
+      .attr("stroke", (d, i) => {
+        const id = this.lines[i].id;
+        const dataItem: DataItem | undefined = this.mapData.get(id);
+        if(dataItem !== undefined){
+          const color: string = this.getColorOfDataItem(dataItem);
+
+          return color;
+        } else {
+
+          return "black"
+        }
+      })
+      .on('mouseenter', (d,i) => {
+        // get related data item - if possible
+        const id: string = this.lines[i].id;
+        const dataItem: DataItem | undefined = this.mapData.get(id);
+
+        if(dataItem !== undefined){
+          this.sendHover({ dataItems: [dataItem], sourceElement: event.target })
+        }
+      })
+      .on('mouseout', d => {
+        this.sendHover({ dataItems: [], sourceElement: event.target })
+      });
+
+  }
+
 }
