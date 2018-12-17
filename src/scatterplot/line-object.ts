@@ -1,7 +1,6 @@
-import {LineItem} from "./line-item";
+import { LineItem } from './line-item'
 
-export interface LineObject{
-
+export interface LineObject {
   /**
    * The id of a line
    */
@@ -11,5 +10,4 @@ export interface LineObject{
    * The data associated with the line
    */
   data: LineItem[]
-
 }
