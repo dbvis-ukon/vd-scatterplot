@@ -774,13 +774,11 @@ export class VdScatterplot {
    * Draw lines contained in scatterplot
    */
   private drawLines(): void {
-    const svg = this.plot.append('svg')
-
     const l = line<LineItem>()
       .x((d: LineItem) => this.xScale(d.x))
       .y((d: LineItem) => this.yScale(d.y))
 
-    svg
+    this.plot
       .selectAll('.line')
       .data<LineItem[]>(this.lines.map((lo: LineObject) => lo.data))
       .enter()
