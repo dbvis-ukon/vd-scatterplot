@@ -779,12 +779,13 @@ export class VdScatterplot {
       .y((d: LineItem) => this.yScale(d.y))
 
     this.plot
-      .selectAll('.line')
+      .selectAll('.linetrace')
       .data<LineItem[]>(this.lines.map((lo: LineObject) => lo.data))
       .enter()
       .append('path')
       .attr('class', 'linetrace')
       .style('stroke-dasharray', '2 2')
+      .attr('fill', 'none')
       .attr('d', l)
       .attr('stroke', (d, i) => {
         const id = this.lines[i].id
