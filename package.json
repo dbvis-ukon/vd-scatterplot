@@ -138,7 +138,7 @@
     "optimize-css-assets-webpack-plugin": "4.0.2",
     "prettier": "^1.12.1",
     "shx": "0.2.2",
-    "standard-version": "^4.4.0",
+    "standard-version": "^8.0.1",
     "strip-json-comments-cli": "1.0.1",
     "style-loader": "0.21.0",
     "ts-jest": "~22.4.6",
